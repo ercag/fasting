@@ -26,13 +26,18 @@ class _WaterWidgetState extends State<WaterWidget> {
 
   void init() async {
     deviceInfo = (await DeviceInfoHelper.getDeviceInfo())!;
-    var mGlass = await MongoHelper.getHowManyGlassOfWater(deviceInfo);
+    var mGlass = await MongoHelper().getHowManyGlassOfWater(deviceInfo);
     if (mGlass != null) {
-      setState(() {
+      if (mGlass is Map) {
         glassOfWater = mGlass['glassofwater'];
-        loaded = true;
-      });
+      } else {
+        // MessageBoxHelper.show(context, "Error", mGlass.toString(), () {});
+        print(mGlass);
+      }
     }
+    setState(() {
+      loaded = true;
+    });
   }
 
   @override
@@ -54,8 +59,8 @@ class _WaterWidgetState extends State<WaterWidget> {
                                   setState(() {
                                     glassOfWater--;
                                   });
-                                  MongoHelper.updateWater(
-                                      deviceInfo, glassOfWater);
+                                  MongoHelper()
+                                      .updateWater(deviceInfo, glassOfWater);
                                 },
                           icon: const Icon(Icons.remove)),
                       SizedBox(
@@ -67,7 +72,7 @@ class _WaterWidgetState extends State<WaterWidget> {
                             setState(() {
                               glassOfWater++;
                             });
-                            MongoHelper.updateWater(deviceInfo, glassOfWater);
+                            MongoHelper().updateWater(deviceInfo, glassOfWater);
                           },
                           icon: const Icon(Icons.add)),
                     ],

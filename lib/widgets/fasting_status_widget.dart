@@ -1,4 +1,5 @@
 import 'package:fasting/helpers/device_info_helper.dart';
+import 'package:fasting/helpers/messagebox_helper.dart';
 import 'package:fasting/helpers/mongo_helper.dart';
 import 'package:fasting/widgets/diets/14_10_diet_widget.dart';
 import 'package:fasting/widgets/diets/16_8_diet_widget.dart';
@@ -51,14 +52,18 @@ class _FastingStatusState extends State<FastingStatus> {
 
     DeviceInfoHelper.getDeviceInfo().then((value) async {
       deviceInfo = value!;
-      var dietList = await MongoHelper.getLockedDiet(deviceInfo);
+      var dietList = await MongoHelper().getLockedDiet(deviceInfo);
 
       if (dietList != null) {
-        lock = dietList['lockStatus'];
-        fastingTypes
-            .singleWhere(
-                (element) => element.key == dietList['diet'].toString().trim())
-            .selected = true;
+        if (dietList is Map) {
+          lock = dietList['lockStatus'];
+          fastingTypes
+              .singleWhere((element) =>
+                  element.key == dietList['diet'].toString().trim())
+              .selected = true;
+        } else {
+          MessageBoxHelper.show(context, "Error", dietList.toString(), () {});
+        }
       }
       setState(() {
         loaded = true;
@@ -84,7 +89,8 @@ class _FastingStatusState extends State<FastingStatus> {
           // },
           onLock: (activeContainer, lockStatus) {
             print(activeContainer.title + " is " + lockStatus.toString());
-            MongoHelper.lockDiet(activeContainer.key!, deviceInfo, lockStatus);
+            MongoHelper()
+                .lockDiet(activeContainer.key!, deviceInfo, lockStatus);
           },
         ));
   }

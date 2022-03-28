@@ -1,5 +1,7 @@
+import 'package:fasting/helpers/device_info_helper.dart';
 import 'package:fasting/helpers/location_helper.dart';
 import 'package:fasting/helpers/messagebox_helper.dart';
+import 'package:fasting/helpers/mongo_helper.dart';
 import 'package:fasting/services/fasting_service.dart';
 import 'package:fasting/widgets/loading_widget.dart';
 import 'package:fasting/widgets/text_widget.dart';
@@ -27,18 +29,49 @@ class _SSWidgetState extends State<SSWidget> {
     super.initState();
 
     try {
-      LocationHelper.determinePosition().then((value) {
-        getSSInfo(value.latitude, value.longitude);
-      });
+      initasync();
     } catch (e) {
-      MessageBoxHelper.show(context, "Error", e.toString(), () {});
+      // Helper.show(context, "Error", e.toString(), () {});
+      print(e);
+    }
+  }
+
+  void initasync() async {
+    var lastSync = await MongoHelper()
+        .getLastSync((await DeviceInfoHelper.getDeviceInfo())!);
+
+    if (lastSync == null) {
+      var pos = await LocationHelper.determinePosition();
+      getSSInfo(pos.latitude, pos.longitude);
+    } else {
+      if (lastSync is Map) {
+        sunriseTime =
+            DateFormat('yyyy-MM-ddThh:mm:ss').parse(lastSync["sunrise"]);
+        sunsetTime =
+            DateFormat('yyyy-MM-ddThh:mm:ss').parse(lastSync["sunset"]);
+        civilTwilightBegin = DateFormat('yyyy-MM-ddThh:mm:ss')
+            .parse(lastSync["civil_twilight_begin"]);
+        civilTwilightEnd = DateFormat('yyyy-MM-ddThh:mm:ss')
+            .parse(lastSync["astronomical_twilight_end"]);
+      } else {
+        MessageBoxHelper.show(context, "Error", lastSync.toString(), () {});
+      }
     }
   }
 
   void getSSInfo(double? lat, double? lng) {
     // print("Lat: $lat - Lng: $lng - Date: ${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}");
 
-    FastingService.getSS(lat.toString(), lng.toString(), "today").then((value) {
+    FastingService.getSS(lat.toString(), lng.toString(), "today")
+        .then((value) async {
+      await MongoHelper().insertLastSS(
+          deviceInfo: (await DeviceInfoHelper.getDeviceInfo())!,
+          sunriseTime: DateFormat('yyyy-MM-ddThh:mm:ss').parse(value.sunrise),
+          sunsetTime: DateFormat('yyyy-MM-ddThh:mm:ss').parse(value.sunset),
+          civilTwilightBegin: DateFormat('yyyy-MM-ddThh:mm:ss')
+              .parse(value.civil_twilight_begin),
+          civilTwilightEnd: DateFormat('yyyy-MM-ddThh:mm:ss')
+              .parse(value.astronomical_twilight_end));
       setState(() {
         sunriseTime = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value.sunrise);
         sunsetTime = DateFormat('yyyy-MM-ddThh:mm:ss').parse(value.sunset);

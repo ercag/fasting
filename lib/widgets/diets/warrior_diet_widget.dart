@@ -22,7 +22,7 @@ class _WarriorDietState extends State<WarriorDiet> {
 
   Future<void> init() async {
     DeviceInfoHelper.getDeviceInfo().then((value) async {
-      var dietList = await MongoHelper.getLockedDiet(value!);
+      var dietList = await MongoHelper().getLockedDiet(value!);
       if (dietList != null) {
         // "2012-02-27"
 

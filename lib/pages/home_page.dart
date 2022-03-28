@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors_in_immutables
-import 'package:fasting/helpers/messagebox_helper.dart';
 import 'package:fasting/widgets/fasting_status_widget.dart';
 import 'package:fasting/widgets/ss_widget.dart';
 import 'package:fasting/widgets/text_widget.dart';
@@ -26,44 +25,44 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: CText(AppLocalizations.of(context)!.appname),
-        actions: [
-          TextButton(
-              onPressed: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute<void>(
-                //     builder: (BuildContext context) => DummyPage(),
-                //   ),
-                // );
-                MessageBoxHelper.show(context, "Title", "Description", () {
-                  Navigator.of(context).pop();
-                });
-              },
-              child: CText(
-                "Info",
-                color: Colors.black,
-              )),
-          TextButton(
-              onPressed: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute<void>(
-                //     builder: (BuildContext context) => DummyPage(),
-                //   ),
-                // );
-                MessageBoxHelper.showQuestion(
-                    context, "Propose!", "Will your marry me ?", () {
-                  MessageBoxHelper.displaySnackbar(
-                      context, "She said yes! :)", null, () {});
-                  Navigator.of(context).pop();
-                }, () {
-                  MessageBoxHelper.displaySnackbar(
-                      context, "She said no :(", null, () {});
-                  Navigator.of(context).pop();
-                });
-              },
-              child: CText(
-                "Propose",
-                color: Colors.black,
-              ))
+        actions: const [
+          // TextButton(
+          //     onPressed: () {
+          //       // Navigator.of(context).push(
+          //       //   MaterialPageRoute<void>(
+          //       //     builder: (BuildContext context) => DummyPage(),
+          //       //   ),
+          //       // );
+          //       MessageBoxHelper.show(context, "Title", "Description", () {
+          //         Navigator.of(context).pop();
+          //       });
+          //     },
+          //     child: CText(
+          //       "Info",
+          //       color: Colors.black,
+          //     )),
+          // TextButton(
+          //     onPressed: () {
+          //       // Navigator.of(context).push(
+          //       //   MaterialPageRoute<void>(
+          //       //     builder: (BuildContext context) => DummyPage(),
+          //       //   ),
+          //       // );
+          //       // MessageBoxHelper.showQuestion(
+          //       //     context, "Propose!", "Will your marry me ?", () {
+          //       //   MessageBoxHelper.displaySnackbar(
+          //       //       context, "She said yes! :)", null, () {});
+          //       //   Navigator.of(context).pop();
+          //       // }, () {
+          //       //   MessageBoxHelper.displaySnackbar(
+          //       //       context, "She said no :(", null, () {});
+          //       //   Navigator.of(context).pop();
+          //       // });
+          //     },
+          //     child: CText(
+          //       "Propose",
+          //       color: Colors.black,
+          //     ))
         ],
       ),
       body: SingleChildScrollView(

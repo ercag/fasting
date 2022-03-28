@@ -12,7 +12,10 @@ class MessageBoxHelper {
       actions: [
         TextButton(
             onPressed: () {
-              if (onOk != null) onOk();
+              if (onOk != null) {
+                onOk();
+                Navigator.of(context).pop();
+              }
             },
             child: CText(AppLocalizations.of(context)!.ok.toUpperCase())),
       ],

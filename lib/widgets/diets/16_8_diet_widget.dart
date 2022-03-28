@@ -23,21 +23,25 @@ class Diet168State extends State<Diet168> {
 
   Future<void> init() async {
     DeviceInfoHelper.getDeviceInfo().then((value) async {
-      var dietList = await MongoHelper.getLockedDiet(value!);
+      var dietList = await MongoHelper().getLockedDiet(value!);
       if (dietList != null) {
         // "2012-02-27"
-
-        DateTime lockedDate =
-            DateFormat('dd-MM-yyyy').parse(dietList['lockDate']);
-        setState(() {
-          howManyDaysPast =
-              (DateTime.now().difference(lockedDate).inHours / 24).round();
-          // if (howManyDaysPast > 7) {
-          while (howManyDaysPast > 7) {
-            howManyDaysPast = howManyDaysPast - 7;
-          }
-          // }
-        });
+        if (dietList is Map) {
+          DateTime lockedDate =
+              DateFormat('dd-MM-yyyy').parse(dietList['lockDate']);
+          setState(() {
+            howManyDaysPast =
+                (DateTime.now().difference(lockedDate).inHours / 24).round();
+            // if (howManyDaysPast > 7) {
+            while (howManyDaysPast > 7) {
+              howManyDaysPast = howManyDaysPast - 7;
+            }
+            // }
+          });
+        } else {
+          // MessageBoxHelper.show(context, "Error", dietList.toString(), () {});
+          print(dietList);
+        }
       }
     });
   }
